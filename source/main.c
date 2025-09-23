@@ -44,26 +44,15 @@ int main(int argc, char **argv)
 	{
 		//Scan all the inputs. This should be done once for each frame
 		hidScanInput();
-
-		//hidKeysDown returns information about which buttons have been just pressed (and they weren't in the previous frame)
-		u32 kDown = hidKeysDown();
-
-		if (kDown & KEY_START) break; // break in order to return to hbmenu
+  		if (hidKeysDown() & KEY_START) break;
 
   		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		C2D_TargetClear(top, clrBlack);
 		C2D_SceneBegin(top);
 
-  		C2D_DrawSprite(spritee[0].spr);
+  		C2D_DrawSprite(&spritee[0].spr);
 
   		C3D_FrameEnd(0);
-
-		// Flush and swap framebuffers
-		gfxFlushBuffers();
-		gfxSwapBuffers();
-
-		//Wait for VBlank
-		gspWaitForVBlank();
 	}
  	C2D_SpriteSheetFree(spriteSheet);
     C2D_Fini();
