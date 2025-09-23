@@ -1,2 +1,4 @@
 # Rendering-Sprite-3ds
-just rendering sprite in 3ds lol
+just rendering sprite on 3ds lol
+
+it's not working yet
