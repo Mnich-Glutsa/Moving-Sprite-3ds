@@ -6,6 +6,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define SCREEN_WIDTH  400
+#define SCREEN_HEIGHT 240
+
+int x = 100;
+int y = 100;
+int speed = 5;
+
 typedef struct //definiowane struktury sprite'a, czyli nie wiem o co biega
 {
 	C2D_Sprite spr;
@@ -14,6 +21,30 @@ typedef struct //definiowane struktury sprite'a, czyli nie wiem o co biega
 
 static C2D_SpriteSheet spriteSheet;
 static Sprite spritee[1]; //jedna instacja sprite'a
+
+int control() {
+	Sprite* sprite = &spritee[0];
+	//Scan all the inputs. This should be done once for each frame
+	hidScanInput();
+	if (hidKeysDown() & KEY_START) return 1; //Click start to exit program
+
+ 	//Movement
+ 	if (hidKeysHeld() & KEY_CPAD_UP) y-=speed;
+ 	if (hidKeysHeld() & KEY_CPAD_DOWN) y+=speed;
+ 	if (hidKeysHeld() & KEY_CPAD_LEFT) x-=speed;
+ 	if (hidKeysHeld() & KEY_CPAD_RIGHT) x+=speed;
+
+ 	//Now the sprite cannot go off screen
+ 	if (x > SCREEN_WIDTH) x = SCREEN_WIDTH;
+ 	if (y > SCREEN_HEIGHT) y = SCREEN_HEIGHT;
+ 	if (x < 0) x = 0;
+ 	if (y < 0) y = 0;
+
+ 	//Update position
+ 	C2D_SpriteSetPos(&sprite->spr, x, y);
+
+ 	return 0;
+}
 
 int main(int argc, char **argv)
 {
@@ -37,14 +68,12 @@ int main(int argc, char **argv)
 
  	C2D_SpriteFromSheet(&sprite->spr, spriteSheet, 0);
 	C2D_SpriteSetCenter(&sprite->spr, 0.5f, 0.5f);
-	C2D_SpriteSetPos(&sprite->spr, 100, 100);
+	C2D_SpriteSetPos(&sprite->spr, x, y);
 
 	// Main loop
 	while (aptMainLoop())
 	{
-		//Scan all the inputs. This should be done once for each frame
-		hidScanInput();
-  		if (hidKeysDown() & KEY_START) break;
+   		if (control() == 1) break;
 
   		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		C2D_TargetClear(top, clrBlack);
